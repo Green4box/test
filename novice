@@ -1,0 +1,36 @@
+#marine
+name = "marine"
+hp = 40
+damage = 5
+
+print("{0} unit is produced.".format(name))
+print("hp {0}, damage {1}\n".format(hp, damage))
+
+#tank
+tank_name = "tank"
+tank_hp = 150
+tank_damage = 35
+
+print("{0} unit is produced.".format(tank_name))
+print("hp {0}, damage {1}\n".format(tank_hp, tank_damage))
+
+def attack(name, location, damage):
+    print("{0} : attacking enemy toward {1} [damage {2}]".format(\
+        name, location, damage))
+
+attack(name, "1 o'clock", damage)
+attack(tank_name, "1 o'clock", tank_damage)
+
+#유닛이 여러개가 된다면? tank2, tank3 계속 만들수는 없지. 그래서 class를 사용
+
+class Unit:
+    def __init__(self, name, hp, damage):
+        self.name = name
+        self.hp = hp
+        self.damage = damage
+        print("{0} unit is produced.".format(self.name))
+        print("hp {0}, damage {1}".format(self.hp, self.damage))
+
+marine1 = Unit("marine", 40, 5)
+marine2 = Unit("marine", 40, 5)
+tank = Unit("tank", 150, 35)
