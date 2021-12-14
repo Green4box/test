@@ -34,3 +34,184 @@ class Unit:
 marine1 = Unit("marine", 40, 5)
 marine2 = Unit("marine", 40, 5)
 tank = Unit("tank", 150, 35)
+
+#9-5 상속
+
+# 일반 유닛
+class Unit:
+    def __init__(self, name, hp, damage):
+        self.name = name
+        self.hp = hp
+        self.damage = damage
+        print("{0} unit is produced.".format(self.name))
+        print("hp {0}, damage {1}".format(self.hp, self.damage))
+
+# 공격 유닛
+class AttackUnit:
+    def __init__(self, name, hp, damage):
+        self.name = name
+        self.hp = hp
+        self.damage = damage
+    
+    def attack(self, location):
+        print("{0} : attacking enemy toward {1} [damage {2}]".format(\
+            self.name, location, self.damage))
+    
+    def damaged(self, damage):
+        print("{0} : damaged {1}.".format(self.name, damage))
+        self.hp -= damage
+        print("{0} : {1} hp is left.".format(self.name, self.hp))
+        if self.hp <= 0:
+            print("{0} is destroyed.".format(self.name))
+
+## 파이어뱃: 공격 유닛, 화염방사기
+firebat1 = AttackUnit("firebat", 50, 16)
+firebat1.attack("5 o'clock")
+
+firebat1.damaged(25)
+firebat1.damaged(25) # 두번 공격 받는다고 가정
+
+#9-5 상속
+
+# 유닛
+class Unit:
+    def __init__(self, name, hp):
+        self.name = name
+        self.hp = hp
+
+# 공격 유닛
+class AttackUnit(Unit):   #상속받을 클래스의 이름을 괄호 안에 
+    def __init__(self, name, hp, damage):
+        Unit.__init__(self, name, hp)
+        self.damage = damage
+    
+    def attack(self, location):
+        print("{0} : attacking enemy toward {1} [damage {2}]".format(\
+            self.name, location, self.damage))
+    
+    def damaged(self, damage):
+        print("{0} : damaged {1}.".format(self.name, damage))
+        self.hp -= damage
+        print("{0} : {1} hp is left.".format(self.name, self.hp))
+        if self.hp <= 0:
+            print("{0} is destroyed.".format(self.name))
+
+## 파이어뱃: 공격 유닛, 화염방사기
+firebat1 = AttackUnit("firebat", 50, 16)
+firebat1.attack("5 o'clock")
+
+firebat1.damaged(25)
+firebat1.damaged(25) # 두번 공격 받는다고 가정
+
+# 9-6 다중 상속
+
+# 날 수 있는 기능을 가진 클래스
+class Flyable:
+    def __init__(self, flying_speed):
+        self.flying_speed = flying_speed
+    
+    def fly(self, name, location):
+        print("{0} : flying toward {1}. [flying speed {2}]"\
+            .format(self.name, location, self.flying_speed))
+
+# 공중 공격 유닛 클래스
+class FlyableAttackingUnit(AttackUnit, Flyable):  # 상속받고자 하는 클래스들을 괄호 안에 나열
+    def __init__(self, name, hp, damage, flying_speed):
+        AttackUnit.__init__(self, name, hp, damage)
+        Flyable.__init__(self, flying_speed)
+
+# 발키리 : 공중 공격 유닛
+valkyrie = FlyableAttackingUnit("valkyrie", 200, 6, 5)
+valkyrie.fly(valkyrie.name, "3 o'clock")
+
+# 9-7 메소드 오버라이딩
+
+# 유닛
+class Unit:
+    def __init__(self, name, hp, speed):
+        self.name = name
+        self.hp = hp
+        self.speed = speed
+
+    def move(self, location):
+        print("[A ground unit move]")
+        print("{0} : moving toward {1}. [speed {2}]".format(self.name, location, self.speed))
+
+
+
+# 공격 유닛
+class AttackUnit(Unit):
+    def __init__(self, name, hp, speed, damage):
+        Unit.__init__(self, name, hp, speed)
+        self.damage = damage
+    
+    def attack(self, location):
+        print("{0} : attacking enemy toward {1} [damage {2}]".format(\
+            self.name, location, self.damage))
+    
+    def damaged(self, damage):
+        print("{0} : damaged {1}.".format(self.name, damage))
+        self.hp -= damage
+        print("{0} : {1} hp is left.".format(self.name, self.hp))
+        if self.hp <= 0:
+            print("{0} is destroyed.".format(self.name))
+
+# 날 수 있는 기능을 가진 클래스
+class Flyable:
+    def __init__(self, flying_speed):
+        self.flying_speed = flying_speed
+    
+    def fly(self, name, location):
+        print("{0} : flying toward {1}. [flying speed {2}]"\
+            .format(self.name, location, self.flying_speed))
+
+# 공중 공격 유닛 클래스
+class FlyableAttackingUnit(AttackUnit, Flyable):
+    def __init__(self, name, hp, damage, flying_speed):
+        AttackUnit.__init__(self, name, hp, 0, damage) # 공중유닛이므로 speed는 0으로 고정
+        Flyable.__init__(self, flying_speed)
+
+# 벌쳐 : 지상 유닛
+vulture = AttackUnit("vulture", 80, 10, 20)
+
+# 배틀크루저: 공중 유닛
+battlecruiser = FlyableAttackingUnit("battlecruiser", 500, 25, 3)
+
+vulture.move("11 o'clock")
+battlecruiser.fly(battlecruiser.name, "3 o'clock")
+# 지상에는 move, 공중에는 fly. 비슷한 기능인데 굳이 구분해야돼? 메소드오버라이딩으로 해결해보자
+
+# 공중 공격 유닛 클래스
+class FlyableAttackingUnit(AttackUnit, Flyable):
+    def __init__(self, name, hp, damage, flying_speed):
+        AttackUnit.__init__(self, name, hp, 0, damage)
+        Flyable.__init__(self, flying_speed)
+
+    def move(self, location):  # Unit에 정의돼있던 move 를 재정의
+        print("[air unit move]")
+        self.fly(self.name, location)
+        
+# 9-8 pass
+
+# 건물
+class BuildingUnit(Unit):
+    def __init__(self, name, hp, speed):
+        pass # 일단은 아무것도 안하고 넘기는 기능. 함수를 완성시키는 용도.
+
+# 서플라이 디폿
+suppy_depot = BuildingUnit("supply depot", 500, "7 o'clock")
+
+# 9-9 super
+# 건물
+class BuildingUnit(Unit):
+    def __init__(self, name, hp, speed, location):
+        #Unit.__init__(self, name, hp, 0) 이거 대신에 super 를 사용가능. 단, self 는 빼야함.
+        super().__init__(name, hp, speed)
+        self.location = location
+# 서플라이 디폿
+suppy_depot = BuildingUnit("supply depot", 500, "7 o'clock")
+
+
+
+
+
